@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="sidebar" th:fragment="sidebar">
+    <h2>Library Menu</h2>
+    <ul>
+        <li><a th:href="@{/books}">Book Management</a></li>
+        <li><a th:href="@{/members}">Member Management</a></li>
+    </ul>
+    <hr/>
+    <form th:action="@{/logout}" method="post" style="margin-top: 20px;">
+        <button type="submit" style="width: 100%; padding: 10px; background-color: #c0392b; color: white; border: none; border-radius: 4px; cursor: pointer;">Logout</button>
+    </form>
+</div>
+</body>
+</html>

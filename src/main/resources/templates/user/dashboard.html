@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Dashboard</title>
+</head>
+<body>
+<div class="page-container">
+    <div th:replace="~{/fragments/user-sidebar :: sidebar}"></div>
+
+    <div class="main-content">
+        <h1>My Borrowed Books</h1>
+        <p>Here is a list of books you have currently checked out.</p>
+    </div>
+</div>
+</body>
+</html>

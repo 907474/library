@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="sidebar" th:fragment="sidebar">
+    <h2>Member Menu</h2>
+    <ul>
+        <li><a th:href="@{/dashboard}">My Borrowed Books</a></li>
+        <li><a href="#">Search Catalog</a></li>
+        <li><a href="#">User Services</a></li>
+    </ul>
+    <hr/>
+    <form th:action="@{/logout}" method="post" style="margin-top: 20px;">
+        <button type="submit">Logout</button>
+    </form>
+</div>
+</body>
+</html>
