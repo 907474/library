@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Book Details</title>
+</head>
+<body>
+<div class="page-container">
+    <div th:replace="~{/fragments/admin-sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <h1 th:text="${book.title}">Book Title</h1>
+        <p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
+        <p><strong>ISBN:</strong> <span th:text="${book.isbn}"></span></p>
+
+        <hr/>
+        <h2>Add New Copy to Inventory</h2>
+        <form th:action="@{/books/{bookId}/copies(bookId=${book.id})}" th:object="${newCopy}" method="post">
+            <div>
+                <label>Location (Call Number):</label>
+                <input type="text" th:field="*{location}" required />
+            </div>
+            <div>
+                <label>Condition:</label>
+                <select th:field="*{condition}">
+                    <option th:each="cond : ${T(com.aw.librarysystem.entity.enums.BookCondition).values()}"
+                            th:value="${cond}" th:text="${cond}"></option>
+                </select>
+            </div>
+            <button type="submit">Add Copy</button>
+        </form>
+
+        <hr/>
+        <h2>Existing Copies</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Copy ID</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Condition</th>
+                <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="copy : ${book.copies}">
+                <td th:text="${copy.id}"></td>
+                <td th:text="${copy.location}"></td>
+                <td th:text="${copy.status}"></td>
+                <td th:text="${copy.condition}"></td>
+                <td th:text="${copy.notes}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

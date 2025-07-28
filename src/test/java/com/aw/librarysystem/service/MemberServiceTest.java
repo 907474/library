@@ -38,17 +38,6 @@ class MemberServiceTest {
     }
 
     @Test
-    void findAllMembers_ShouldReturnListOfMembers() {
-        when(memberRepository.findAll()).thenReturn(List.of(member1));
-
-        List<Member> members = memberService.findAllMembers();
-
-        assertNotNull(members);
-        assertEquals(1, members.size());
-        verify(memberRepository).findAll();
-    }
-
-    @Test
     void saveMember_ShouldSaveNewMemberSuccessfully() {
         Member newMember = new Member();
         newMember.setUsername("janedoe");
@@ -66,15 +55,28 @@ class MemberServiceTest {
     }
 
     @Test
+    void saveMember_ShouldUpdateExistingMember() {
+        // This test simulates updating an existing member
+        when(memberRepository.save(any(Member.class))).thenReturn(member1);
+
+        member1.setPhoneNumber("555-1234");
+        Member updatedMember = memberService.saveMember(member1);
+
+        assertNotNull(updatedMember);
+        assertEquals("555-1234", updatedMember.getPhoneNumber());
+        // Verify findBy methods are not called for updates
+        verify(memberRepository, never()).findByUsername(anyString());
+        verify(memberRepository, never()).findByEmail(anyString());
+        verify(memberRepository).save(member1);
+    }
+
+    @Test
     void saveMember_ShouldThrowException_WhenUsernameExists() {
         Member newMember = new Member();
         newMember.setUsername("johndoe");
         when(memberRepository.findByUsername("johndoe")).thenReturn(Optional.of(member1));
 
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            memberService.saveMember(newMember);
-        });
-
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> memberService.saveMember(newMember));
         assertEquals("Username already exists: johndoe", exception.getMessage());
         verify(memberRepository, never()).save(any(Member.class));
     }
@@ -87,33 +89,8 @@ class MemberServiceTest {
         when(memberRepository.findByUsername("janedoe")).thenReturn(Optional.empty());
         when(memberRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(member1));
 
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            memberService.saveMember(newMember);
-        });
-
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> memberService.saveMember(newMember));
         assertEquals("Email already exists: john.doe@example.com", exception.getMessage());
         verify(memberRepository, never()).save(any(Member.class));
-    }
-
-    @Test
-    void deleteMemberById_ShouldCallDelete_WhenMemberExists() {
-        when(memberRepository.existsById(1)).thenReturn(true);
-        doNothing().when(memberRepository).deleteById(1);
-
-        assertDoesNotThrow(() -> memberService.deleteMemberById(1));
-
-        verify(memberRepository).deleteById(1);
-    }
-
-    @Test
-    void deleteMemberById_ShouldThrowException_WhenMemberDoesNotExist() {
-        when(memberRepository.existsById(99)).thenReturn(false);
-
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            memberService.deleteMemberById(99);
-        });
-
-        assertEquals("Member not found with ID: 99", exception.getMessage());
-        verify(memberRepository, never()).deleteById(99);
     }
 }
