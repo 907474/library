@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:with="content=~{::.admin-content}, pageTitle='Account Management'"
+      th:replace="~{layout :: ~{}}">
+<body>
+<div class="admin-content">
+    <h1>System Account Management</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Enabled</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="account : ${accounts}">
+            <td th:text="${account.id}"></td>
+            <td th:text="${account.username}"></td>
+            <td th:text="${account.role}"></td>
+            <td th:text="${account.enabled}"></td>
+            <td>
+                <a href="#">Change Role</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

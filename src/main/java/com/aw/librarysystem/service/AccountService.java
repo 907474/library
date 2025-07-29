@@ -3,9 +3,12 @@ package com.aw.librarysystem.service;
 import com.aw.librarysystem.entity.SystemAccount;
 import com.aw.librarysystem.entity.enums.Role;
 import com.aw.librarysystem.repository.SystemAccountRepository;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AccountService {
@@ -16,6 +19,10 @@ public class AccountService {
     public AccountService(SystemAccountRepository accountRepository, PasswordEncoder passwordEncoder) {
         this.accountRepository = accountRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public List<SystemAccount> findAllAccounts() {
+        return accountRepository.findAll();
     }
 
     public void changePassword(String initiatorUsername, String targetUsername, String newPassword) {
@@ -34,7 +41,7 @@ public class AccountService {
         SystemAccount initiator = findByUsername(initiatorUsername);
         SystemAccount target = findByUsername(targetUsername);
 
-        if(initiator.getRole() != Role.ADMIN) {
+        if (initiator.getRole() != Role.ADMIN) {
             throw new SecurityException("You must be an admin to change account status.");
         }
 
@@ -43,12 +50,17 @@ public class AccountService {
     }
 
     private boolean canChangePassword(SystemAccount initiator, SystemAccount target) {
+        // A user can always change their own password.
         if (initiator.getId().equals(target.getId())) {
             return true;
         }
+
+        // An Admin can change anyone's password.
         if (initiator.getRole() == Role.ADMIN) {
             return true;
         }
+
+        // Staff can change a User's password, but not another Staff's or an Admin's.
         if (initiator.getRole() == Role.STAFF && target.getRole() == Role.USER) {
             return true;
         }

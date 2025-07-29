@@ -38,44 +38,37 @@ public class BorrowingService {
         BookCopy bookCopy = bookCopyRepository.findById(copyId)
                 .orElseThrow(() -> new IllegalStateException("Book copy not found with ID: " + copyId));
 
-        // Rule: Check member status
         if (member.getStatus() != MemberStatus.ACTIVE) {
             throw new IllegalStateException("Member account is not active.");
         }
 
-        // Rule: Check book copy availability
         if (bookCopy.getStatus() != BookCopyStatus.AVAILABLE) {
             throw new IllegalStateException("Book copy is not available for borrowing.");
         }
 
-        // Rule: Check if member has overdue books
         boolean hasOverdueBooks = !borrowingRecordRepository
                 .findByDueDateBeforeAndReturnDateIsNull(LocalDate.now()).isEmpty();
         if (hasOverdueBooks) {
             throw new IllegalStateException("Cannot borrow. Member has overdue books.");
         }
 
-        // Rule: Check monthly borrowing cap
-        int monthlyCap = 10; // This could be made configurable later
+        int monthlyCap = 10;
         if (member.getMonthlyBorrows() >= monthlyCap) {
             throw new IllegalStateException("Monthly borrowing limit has been reached.");
         }
 
-        // Update member's borrow counts
         member.setMonthlyBorrows(member.getMonthlyBorrows() + 1);
         member.setLifetimeBorrows(member.getLifetimeBorrows() + 1);
         memberRepository.save(member);
 
-        // Update book copy status
         bookCopy.setStatus(BookCopyStatus.BORROWED);
         bookCopyRepository.save(bookCopy);
 
-        // Create the borrowing record
         BorrowingRecord newRecord = new BorrowingRecord();
         newRecord.setMember(member);
         newRecord.setBookCopy(bookCopy);
         newRecord.setBorrowDate(LocalDate.now());
-        int borrowingPeriodDays = 30; // Could be configurable
+        int borrowingPeriodDays = 30;
         newRecord.setDueDate(LocalDate.now().plusDays(borrowingPeriodDays));
         newRecord.setStatus(BorrowingStatus.BORROWED);
 
@@ -112,12 +105,12 @@ public class BorrowingService {
             throw new IllegalStateException("Cannot renew a book that has already been returned.");
         }
 
-        int maxRenewals = 2; // Could be configurable
+        int maxRenewals = 2;
         if (recordToRenew.getRenewalCount() >= maxRenewals) {
             throw new IllegalStateException("Maximum renewal limit reached for this book.");
         }
 
-        int renewalPeriodDays = 14; // Could be configurable
+        int renewalPeriodDays = 14;
         recordToRenew.setDueDate(recordToRenew.getDueDate().plusDays(renewalPeriodDays));
         recordToRenew.setRenewalCount(recordToRenew.getRenewalCount() + 1);
 
@@ -132,5 +125,18 @@ public class BorrowingService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalStateException("Member not found with ID: " + memberId));
         return borrowingRecordRepository.findByMemberOrderByBorrowDateDesc(member);
+    }
+
+    @Transactional
+    public void updateOverdueStatuses() {
+        List<BorrowingRecord> overdueRecords = borrowingRecordRepository
+                .findByDueDateBeforeAndReturnDateIsNull(LocalDate.now());
+
+        for (BorrowingRecord record : overdueRecords) {
+            if (record.getStatus() != BorrowingStatus.OVERDUE) {
+                record.setStatus(BorrowingStatus.OVERDUE);
+                borrowingRecordRepository.save(record);
+            }
+        }
     }
 }

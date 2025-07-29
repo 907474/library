@@ -1,17 +1,37 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>My Dashboard</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:with="content=~{::.dashboard-content}, pageTitle='My Dashboard'"
+      th:replace="~{layout :: ~{}}">
 <body>
-<div class="page-container">
-    <div th:replace="~{/fragments/user-sidebar :: sidebar}"></div>
+<div class="dashboard-content">
+    <h1>My Borrowing History</h1>
 
-    <div class="main-content">
-        <h1>My Borrowed Books</h1>
-        <p>Here is a list of books you have currently checked out.</p>
+    <div th:if="${#lists.isEmpty(borrowingHistory)}">
+        <p>You have no borrowing history.</p>
     </div>
+
+    <table th:unless="${#lists.isEmpty(borrowingHistory)}">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Borrow Date</th>
+            <th>Due Date</th>
+            <th>Return Date</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="record : ${borrowingHistory}">
+            <td th:text="${record.bookCopy.book.title}"></td>
+            <td th:text="${record.bookCopy.book.author}"></td>
+            <td th:text="${record.borrowDate}"></td>
+            <td th:text="${record.dueDate}"></td>
+            <td th:text="${record.returnDate != null ? record.returnDate : 'Not Returned'}"></td>
+            <td th:text="${record.status}"></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

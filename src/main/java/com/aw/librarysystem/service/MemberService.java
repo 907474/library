@@ -1,6 +1,7 @@
 package com.aw.librarysystem.service;
 
 import com.aw.librarysystem.entity.Member;
+import com.aw.librarysystem.entity.enums.MemberStatus;
 import com.aw.librarysystem.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,7 @@ public class MemberService {
                 throw new IllegalStateException("Username already exists: " + member.getUsername());
             });
             memberRepository.findByEmail(member.getEmail()).ifPresent(m -> {
-                throw new IllegalStateException("Email already exists: " + member.getEmail());
+                throw new IllegalStateException("Email already exists: ".concat(member.getEmail()));
             });
             member.setRegistrationDate(LocalDate.now());
         }
@@ -45,5 +46,13 @@ public class MemberService {
             throw new IllegalStateException("Member not found with ID: " + id);
         }
         memberRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void updateMemberStatus(Integer memberId, MemberStatus newStatus) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalStateException("Member not found with ID: " + memberId));
+        member.setStatus(newStatus);
+        memberRepository.save(member);
     }
 }

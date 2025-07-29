@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:with="content=~{::.catalog-content}, pageTitle='Book Catalog'"
+      th:replace="~{layout :: ~{}}">
+<body>
+<div class="catalog-content">
+    <h1>Book Catalog</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Publisher</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
+            <td th:text="${book.title}"></td>
+            <td th:text="${book.author}"></td>
+            <td th:text="${book.publisher}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -33,6 +33,12 @@ public class BookController {
         return "books/list";
     }
 
+    @GetMapping("/catalog")
+    public String showCatalog(Model model) {
+        model.addAttribute("books", bookService.findAllBooks());
+        return "catalog";
+    }
+
     @GetMapping("/books/new")
     public String showCreateForm(Model model) {
         model.addAttribute("book", new Book());
