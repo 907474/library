@@ -2,6 +2,8 @@ package com.aw.librarysystem.controller;
 
 import com.aw.librarysystem.entity.Book;
 import com.aw.librarysystem.entity.BookCopy;
+import com.aw.librarysystem.repository.AudienceRepository;
+import com.aw.librarysystem.repository.CategoryRepository;
 import com.aw.librarysystem.service.BookCopyService;
 import com.aw.librarysystem.service.BookService;
 import org.springframework.stereotype.Controller;
@@ -16,10 +18,15 @@ public class BookController {
 
     private final BookService bookService;
     private final BookCopyService bookCopyService;
+    private final CategoryRepository categoryRepository;
+    private final AudienceRepository audienceRepository;
 
-    public BookController(BookService bookService, BookCopyService bookCopyService) {
+    public BookController(BookService bookService, BookCopyService bookCopyService,
+                          CategoryRepository categoryRepository, AudienceRepository audienceRepository) {
         this.bookService = bookService;
         this.bookCopyService = bookCopyService;
+        this.categoryRepository = categoryRepository;
+        this.audienceRepository = audienceRepository;
     }
 
     @GetMapping("/")
@@ -42,6 +49,8 @@ public class BookController {
     @GetMapping("/books/new")
     public String showCreateForm(Model model) {
         model.addAttribute("book", new Book());
+        model.addAttribute("allCategories", categoryRepository.findAll());
+        model.addAttribute("allAudiences", audienceRepository.findAll());
         return "books/form";
     }
 
@@ -56,6 +65,8 @@ public class BookController {
         Book book = bookService.findBookById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid book Id:" + id));
         model.addAttribute("book", book);
+        model.addAttribute("allCategories", categoryRepository.findAll());
+        model.addAttribute("allAudiences", audienceRepository.findAll());
         return "books/form";
     }
 

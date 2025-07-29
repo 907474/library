@@ -3,33 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Member Management</title>
-    <style>
-        body { font-family: sans-serif; margin: 0; }
-        .page-container { display: flex; height: 100vh; }
-        .sidebar { width: 220px; flex-shrink: 0; background-color: #2c3e50; color: white; padding: 20px; }
-        .sidebar h2 { color: #ecf0f1; }
-        .sidebar ul { list-style-type: none; padding: 0; }
-        .sidebar ul li a { color: #ecf0f1; text-decoration: none; display: block; padding: 10px; border-radius: 4px; }
-        .sidebar ul li a:hover { background-color: #34495e; }
-        .main-content { flex-grow: 1; padding: 20px; overflow-y: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #dddddd; text-align: left; padding: 8px; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class="page-container">
-    <div th:replace="~{/fragments/sidebar :: sidebar}"></div>
+    <div th:replace="~{/fragments/admin-sidebar :: sidebar}"></div>
 
     <div class="main-content">
-        <h1>Library Members</h1>
-        <a href="/members/new">Add New Member</a>
-        <br/><br/>
+        <h1>Member Management</h1>
+        <a th:href="@{/members/new}" class="btn btn-success">Add New Member</a>
+
         <table>
             <thead>
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Phone Number</th>
+                <th>Username</th>
+                <th>Email</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
@@ -38,10 +28,11 @@
             <tr th:each="member : ${members}">
                 <td th:text="${member.id}"></td>
                 <td th:text="${member.name}"></td>
-                <td th:text="${member.phoneNumber}"></td>
+                <td th:text="${member.username}"></td>
+                <td th:text="${member.email}"></td>
                 <td th:text="${member.status}"></td>
                 <td>
-                    <a th:href="@{/members/edit/{id}(id=${member.id})}">Edit</a>
+                    <a th:href="@{/members/edit/{id}(id=${member.id})}">Edit</a> |
                     <a th:href="@{/members/delete/{id}(id=${member.id})}">Delete</a>
                 </td>
             </tr>

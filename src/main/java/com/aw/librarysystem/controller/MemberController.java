@@ -19,7 +19,7 @@ public class MemberController {
     @GetMapping
     public String listMembers(Model model) {
         model.addAttribute("members", memberService.findAllMembers());
-        return "members/list"; // e.g. /templates/members/list.html
+        return "members/list";
     }
 
     @GetMapping("/new")
