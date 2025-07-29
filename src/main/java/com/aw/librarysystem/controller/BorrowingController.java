@@ -1,5 +1,6 @@
 package com.aw.librarysystem.controller;
 
+import com.aw.librarysystem.entity.BorrowingRecord;
 import com.aw.librarysystem.service.BorrowingService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,5 +49,22 @@ public class BorrowingController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
         return "redirect:/borrowing/return";
+    }
+
+    @GetMapping("/renew")
+    public String showRenewForm() {
+        return "borrowing/renew-form";
+    }
+
+    @PostMapping("/renew")
+    public String processRenew(@RequestParam Integer copyId, RedirectAttributes redirectAttributes) {
+        try {
+            BorrowingRecord activeRecord = borrowingService.returnBook(copyId);
+            borrowingService.renewBook(activeRecord.getId());
+            redirectAttributes.addFlashAttribute("successMessage", "Book copy #" + copyId + " successfully renewed.");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/borrowing/renew";
     }
 }

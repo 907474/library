@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Renew a Book</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="page-container">
+    <div th:replace="~{/fragments/admin-sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <div class="form-container">
+            <h1>Renew a Book</h1>
+
+            <div th:if="${successMessage}" style="color: green; margin-bottom: 15px;" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" style="color: red; margin-bottom: 15px;" th:text="${errorMessage}"></div>
+
+            <form th:action="@{/borrowing/renew}" method="post">
+                <div class="form-group">
+                    <label for="copyId">Book Copy ID:</label>
+                    <input type="number" id="copyId" name="copyId" required />
+                </div>
+                <button type="submit" class="btn btn-primary">Process Renewal</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

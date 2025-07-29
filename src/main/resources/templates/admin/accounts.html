@@ -5,13 +5,14 @@
 <body>
 <div class="admin-content">
     <h1>System Account Management</h1>
+    <a th:href="@{/admin/accounts/new}" class="btn btn-success">Create New Account</a>
     <table>
         <thead>
         <tr>
             <th>ID</th>
             <th>Username</th>
             <th>Role</th>
-            <th>Enabled</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -20,9 +21,11 @@
             <td th:text="${account.id}"></td>
             <td th:text="${account.username}"></td>
             <td th:text="${account.role}"></td>
-            <td th:text="${account.enabled}"></td>
+            <td th:text="${account.enabled} ? 'Enabled' : 'Disabled'"></td>
             <td>
-                <a href="#">Change Role</a>
+                <form th:action="@{/admin/accounts/toggle-status/{id}(id=${account.id})}" method="post" style="display: inline;">
+                    <button type-="submit" class="btn" th:text="${account.enabled} ? 'Disable' : 'Enable'"></button>
+                </form>
             </td>
         </tr>
         </tbody>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create New Account</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="page-container">
+    <div th:replace="~{/fragments/admin-sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <div class="form-container">
+            <h1>Create New System Account</h1>
+            <form th:action="@{/admin/accounts}" th:object="${account}" method="post">
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" th:field="*{username}" required />
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" th:field="*{password}" required />
+                </div>
+                <div class="form-group">
+                    <label>Role:</label>
+                    <select th:field="*{role}">
+                        <option th:each="roleValue : ${T(com.aw.librarysystem.entity.enums.Role).values()}"
+                                th:value="${roleValue}" th:text="${roleValue}"></option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Account</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

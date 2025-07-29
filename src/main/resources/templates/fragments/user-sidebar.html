@@ -5,12 +5,12 @@
     <h2>Member Menu</h2>
     <ul>
         <li><a th:href="@{/dashboard}">My Borrowed Books</a></li>
-        <li><a href="#">Search Catalog</a></li>
-        <li><a href="#">User Services</a></li>
+        <li><a th:href="@{/catalog}">Search Catalog</a></li>
+        <li><a th:href="@{/account/change-password}">Change Password</a></li>
     </ul>
     <hr/>
     <form th:action="@{/logout}" method="post" style="margin-top: 20px;">
-        <button type="submit">Logout</button>
+        <button type="submit" class="logout-btn">Logout</button>
     </form>
 </div>
 </body>

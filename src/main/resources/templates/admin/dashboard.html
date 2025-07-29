@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .stats-container { display: flex; gap: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; flex-grow: 1; }
+        .stat-card h3 { margin-top: 0; color: #6c757d; }
+        .stat-card .stat-number { font-size: 2.5em; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="page-container">
+    <div th:replace="~{/fragments/admin-sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <h1>Admin Dashboard</h1>
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Book Copies</h3>
+                <p class="stat-number" th:text="${stats.totalCopies}">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Available for Loan</h3>
+                <p class="stat-number" th:text="${stats.availableCopies}">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Books Overdue</h3>
+                <p class="stat-number" th:text="${stats.overdueCount}">0</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

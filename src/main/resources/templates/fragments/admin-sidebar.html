@@ -2,14 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <div class="sidebar" th:fragment="sidebar">
-    <h2>Library Menu</h2>
+    <h2>Admin Menu</h2>
     <ul>
+        <li><a th:href="@{/admin-dashboard}">Dashboard</a></li>
         <li><a th:href="@{/books}">Book Management</a></li>
         <li><a th:href="@{/members}">Member Management</a></li>
+        <li><a th:href="@{/borrowing/borrow}">Borrow Book</a></li>
+        <li><a th:href="@{/borrowing/return}">Return Book</a></li>
+        <li><a th:href="@{/borrowing/renew}">Renew Book</a></li>
+        <li><a th:href="@{/account/change-password}">Change Password</a></li>
     </ul>
     <hr/>
     <form th:action="@{/logout}" method="post" style="margin-top: 20px;">
-        <button type="submit" style="width: 100%; padding: 10px; background-color: #c0392b; color: white; border: none; border-radius: 4px; cursor: pointer;">Logout</button>
+        <button type="submit" class="logout-btn">Logout</button>
     </form>
 </div>
 </body>

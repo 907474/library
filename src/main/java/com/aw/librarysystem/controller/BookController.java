@@ -8,10 +8,9 @@ import com.aw.librarysystem.service.BookCopyService;
 import com.aw.librarysystem.service.BookService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 public class BookController {
@@ -35,8 +34,15 @@ public class BookController {
     }
 
     @GetMapping("/books")
-    public String listBooks(Model model) {
-        model.addAttribute("books", bookService.findAllBooks());
+    public String listBooks(@RequestParam(value = "query", required = false) String query, Model model) {
+        List<Book> books;
+        if (query != null && !query.isEmpty()) {
+            books = bookService.searchBooks(query);
+        } else {
+            books = bookService.findAllBooks();
+        }
+        model.addAttribute("books", books);
+        model.addAttribute("query", query);
         return "books/list";
     }
 

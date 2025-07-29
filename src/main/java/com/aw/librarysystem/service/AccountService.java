@@ -3,10 +3,10 @@ package com.aw.librarysystem.service;
 import com.aw.librarysystem.entity.SystemAccount;
 import com.aw.librarysystem.entity.enums.Role;
 import com.aw.librarysystem.repository.SystemAccountRepository;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,6 +23,16 @@ public class AccountService {
 
     public List<SystemAccount> findAllAccounts() {
         return accountRepository.findAll();
+    }
+
+    @Transactional
+    public SystemAccount createAccount(SystemAccount newAccount) {
+        accountRepository.findByUsername(newAccount.getUsername()).ifPresent(acc -> {
+            throw new IllegalStateException("Username already exists: " + newAccount.getUsername());
+        });
+        newAccount.setPassword(passwordEncoder.encode(newAccount.getPassword()));
+        newAccount.setEnabled(true);
+        return accountRepository.save(newAccount);
     }
 
     public void changePassword(String initiatorUsername, String targetUsername, String newPassword) {
@@ -50,17 +60,14 @@ public class AccountService {
     }
 
     private boolean canChangePassword(SystemAccount initiator, SystemAccount target) {
-        // A user can always change their own password.
         if (initiator.getId().equals(target.getId())) {
             return true;
         }
 
-        // An Admin can change anyone's password.
         if (initiator.getRole() == Role.ADMIN) {
             return true;
         }
 
-        // Staff can change a User's password, but not another Staff's or an Admin's.
         if (initiator.getRole() == Role.STAFF && target.getRole() == Role.USER) {
             return true;
         }
