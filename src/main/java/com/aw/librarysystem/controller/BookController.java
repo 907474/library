@@ -6,11 +6,12 @@ import com.aw.librarysystem.repository.AudienceRepository;
 import com.aw.librarysystem.repository.CategoryRepository;
 import com.aw.librarysystem.service.BookCopyService;
 import com.aw.librarysystem.service.BookService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 public class BookController {
@@ -34,21 +35,33 @@ public class BookController {
     }
 
     @GetMapping("/books")
-    public String listBooks(@RequestParam(value = "query", required = false) String query, Model model) {
-        List<Book> books;
+    public String listBooks(@RequestParam(value = "query", required = false) String query,
+                            @RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "10") int size,
+                            Model model) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> bookPage;
+
         if (query != null && !query.isEmpty()) {
-            books = bookService.searchBooks(query);
+            bookPage = bookService.searchBooks(query, pageable);
         } else {
-            books = bookService.findAllBooks();
+            bookPage = bookService.findAllBooks(pageable);
         }
-        model.addAttribute("books", books);
+
+        model.addAttribute("bookPage", bookPage);
         model.addAttribute("query", query);
         return "books/list";
     }
 
     @GetMapping("/catalog")
-    public String showCatalog(Model model) {
-        model.addAttribute("books", bookService.findAllBooks());
+    public String showCatalog(@RequestParam(defaultValue = "0") int page,
+                              @RequestParam(defaultValue = "10") int size,
+                              Model model) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> bookPage = bookService.findAllBooks(pageable);
+        model.addAttribute("bookPage", bookPage);
         return "catalog";
     }
 
@@ -76,7 +89,7 @@ public class BookController {
         return "books/form";
     }
 
-    @GetMapping("/books/delete/{id}")
+    @PostMapping("/books/delete/{id}")
     public String deleteBook(@PathVariable("id") Integer id) {
         bookService.deleteBookById(id);
         return "redirect:/books";

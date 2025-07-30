@@ -1,26 +1,53 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      th:with="content=~{::.catalog-content}, pageTitle='Book Catalog'"
-      th:replace="~{layout :: ~{}}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{/fragments/header :: header(pageTitle='Book Catalog')}"></head>
+
 <body>
-<div class="catalog-content">
-    <h1>Book Catalog</h1>
-    <table>
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Publisher</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="book : ${books}">
-            <td th:text="${book.title}"></td>
-            <td th:text="${book.author}"></td>
-            <td th:text="${book.publisher}"></td>
-        </tr>
-        </tbody>
-    </table>
+<div class="page-container">
+    <div sec:authorize="hasRole('USER')" th:replace="~{/fragments/user-sidebar :: sidebar}"></div>
+
+    <div class="main-content">
+        <h1>Book Catalog</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="book : ${bookPage.content}">
+                <td th:text="${book.title}"></td>
+                <td th:text="${book.author}"></td>
+                <td>
+                    <th:block th:with="availableCount=${book.copies.stream().filter(c -> c.status.name() == 'AVAILABLE').count()}">
+                        <div th:if="${availableCount > 0}">
+                            <a th:href="@{/books/details/{id}(id=${book.id})}" class="btn btn-success">Borrow</a>
+                            <span th:text="|(${availableCount} available)|" style="margin-left: 10px;"></span>
+                        </div>
+                        <div th:if="${availableCount == 0}">
+                            <span>All copies borrowed</span>
+                        </div>
+                    </th:block>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${bookPage.totalPages > 0}" class="pagination" style="margin-top: 20px;">
+            <span th:text="|Page ${bookPage.number + 1} of ${bookPage.totalPages}|"></span>
+            <a th:if="${bookPage.hasPrevious()}"
+               th:href="@{/catalog(size=${bookPage.size}, page=${bookPage.number - 1})}">
+                Previous
+            </a>
+            <a th:if="${bookPage.hasNext()}"
+               th:href="@{/catalog(size=${bookPage.size}, page=${bookPage.number + 1})}">
+                Next
+            </a>
+        </div>
+    </div>
 </div>
 </body>
 </html>

@@ -42,7 +42,7 @@ public class MemberController {
         return "members/form";
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteMember(@PathVariable("id") Integer id) {
         memberService.deleteMemberById(id);
         return "redirect:/members";

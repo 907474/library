@@ -13,7 +13,7 @@
         <h1>Book Management</h1>
 
         <form th:action="@{/books}" method="get" style="display: flex; gap: 10px; margin-bottom: 20px;">
-            <input type="text" name="query" placeholder="Search by title..." th:value="${query}" style="flex-grow: 1; padding: 10px;"/>
+            <input type="text" name="query" placeholder="Search by Title or ISBN..." th:value="${query}" style="flex-grow: 1; padding: 10px;"/>
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
 
@@ -30,19 +30,33 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="book : ${books}">
+            <tr th:each="book : ${bookPage.content}">
                 <td th:text="${book.id}"></td>
                 <td th:text="${book.title}"></td>
                 <td th:text="${book.author}"></td>
                 <td th:text="${book.isbn}"></td>
                 <td>
                     <a th:href="@{/books/edit/{id}(id=${book.id})}">Edit</a> |
-                    <a th:href="@{/books/delete/{id}(id=${book.id})}">Delete</a> |
+                    <form th:action="@{/books/delete/{id}(id=${book.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="link-button">Delete</button>
+                    </form> |
                     <a th:href="@{/books/details/{id}(id=${book.id})}">Manage Copies</a>
                 </td>
             </tr>
             </tbody>
         </table>
+
+        <div th:if="${bookPage.totalPages > 0}" class="pagination" style="margin-top: 20px;">
+            <span th:text="|Page ${bookPage.number + 1} of ${bookPage.totalPages}|"></span>
+            <a th:if="${bookPage.hasPrevious()}"
+               th:href="@{/books(size=${bookPage.size}, page=${bookPage.number - 1}, query=${query})}">
+                Previous
+            </a>
+            <a th:if="${bookPage.hasNext()}"
+               th:href="@{/books(size=${bookPage.size}, page=${bookPage.number + 1}, query=${query})}">
+                Next
+            </a>
+        </div>
     </div>
 </div>
 </body>

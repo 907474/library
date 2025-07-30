@@ -8,7 +8,6 @@
 <body>
 <div class="page-container">
     <div th:replace="~{/fragments/admin-sidebar :: sidebar}"></div>
-
     <div class="main-content">
         <h1>Member Management</h1>
         <a th:href="@{/members/new}" class="btn btn-success">Add New Member</a>
@@ -33,7 +32,9 @@
                 <td th:text="${member.status}"></td>
                 <td>
                     <a th:href="@{/members/edit/{id}(id=${member.id})}">Edit</a> |
-                    <a th:href="@{/members/delete/{id}(id=${member.id})}">Delete</a>
+                    <form th:action="@{/members/delete/{id}(id=${member.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="link-button">Delete</button>
+                    </form>
                 </td>
             </tr>
             </tbody>
