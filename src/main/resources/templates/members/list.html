@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Member Management</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
+<head th:replace="~{/fragments/header :: header(pageTitle='Member Management')}"></head>
 <body>
-<div class="page-container">
+<div class.page-container>
     <div th:replace="~{/fragments/admin-sidebar :: sidebar}"></div>
     <div class="main-content">
         <h1>Member Management</h1>
+
+        <form th:action="@{/members}" method="get" class="form-container" style="max-width: 100%; margin-bottom: 20px;">
+            <div style="display: flex; gap: 15px;">
+                <input type="text" name="name" placeholder="Search by Name..." th:value="${name}" style="flex-grow: 1;"/>
+                <input type="text" name="username" placeholder="Search by Username..." th:value="${username}" style="flex-grow: 1;"/>
+                <input type="text" name="email" placeholder="Search by Email..." th:value="${email}" style="flex-grow: 1;"/>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+
         <a th:href="@{/members/new}" class="btn btn-success">Add New Member</a>
 
         <table>
@@ -24,7 +30,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="member : ${members}">
+            <tr th:each="member : ${memberPage.content}">
                 <td th:text="${member.id}"></td>
                 <td th:text="${member.name}"></td>
                 <td th:text="${member.username}"></td>
@@ -39,6 +45,18 @@
             </tr>
             </tbody>
         </table>
+
+        <div th:if="${memberPage.totalPages > 1}" class="pagination" style="margin-top: 20px;">
+            <a th:if="${memberPage.hasPrevious()}"
+               th:href="@{/members(size=${memberPage.size}, page=${memberPage.number - 1}, name=${name}, username=${username}, email=${email})}">
+                Previous
+            </a>
+            <span th:text="|Page ${memberPage.number + 1} of ${memberPage.totalPages}|" style="margin: 0 10px;"></span>
+            <a th:if="${memberPage.hasNext()}"
+               th:href="@{/members(size=${memberPage.size}, page=${memberPage.number + 1}, name=${name}, username=${username}, email=${email})}">
+                Next
+            </a>
+        </div>
     </div>
 </div>
 </body>

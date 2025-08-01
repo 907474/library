@@ -35,7 +35,9 @@ public class BookController {
     }
 
     @GetMapping("/books")
-    public String listBooks(@RequestParam(value = "query", required = false) String query,
+    public String listBooks(@RequestParam(required = false) String title,
+                            @RequestParam(required = false) String author,
+                            @RequestParam(required = false) String isbn,
                             @RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "10") int size,
                             Model model) {
@@ -43,25 +45,40 @@ public class BookController {
         Pageable pageable = PageRequest.of(page, size);
         Page<Book> bookPage;
 
+        boolean isSearching = (title != null && !title.isEmpty()) ||
+                (author != null && !author.isEmpty()) ||
+                (isbn != null && !isbn.isEmpty());
+
+        if (isSearching) {
+            bookPage = bookService.searchBooks(title, author, isbn, pageable);
+        } else {
+            bookPage = bookService.findAllBooks(pageable);
+        }
+
+        model.addAttribute("bookPage", bookPage);
+        model.addAttribute("title", title);
+        model.addAttribute("author", author);
+        model.addAttribute("isbn", isbn);
+        return "books/list";
+    }
+
+    @GetMapping("/catalog")
+    public String showCatalog(@RequestParam(value = "query", required = false) String query,
+                              @RequestParam(defaultValue = "0") int page,
+                              @RequestParam(defaultValue = "10") int size,
+                              Model model) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> bookPage;
+
         if (query != null && !query.isEmpty()) {
-            bookPage = bookService.searchBooks(query, pageable);
+            bookPage = bookService.searchBooks(query, query, query, pageable);
         } else {
             bookPage = bookService.findAllBooks(pageable);
         }
 
         model.addAttribute("bookPage", bookPage);
         model.addAttribute("query", query);
-        return "books/list";
-    }
-
-    @GetMapping("/catalog")
-    public String showCatalog(@RequestParam(defaultValue = "0") int page,
-                              @RequestParam(defaultValue = "10") int size,
-                              Model model) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Book> bookPage = bookService.findAllBooks(pageable);
-        model.addAttribute("bookPage", bookPage);
         return "catalog";
     }
 

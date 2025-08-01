@@ -8,52 +8,31 @@
 <body>
 <div class="page-container">
     <div th:replace="~{/fragments/admin-sidebar :: sidebar}"></div>
-
     <div class="main-content">
         <h1>Book Management</h1>
 
-        <form th:action="@{/books}" method="get" style="display: flex; gap: 10px; margin-bottom: 20px;">
-            <input type="text" name="query" placeholder="Search by Title or ISBN..." th:value="${query}" style="flex-grow: 1; padding: 10px;"/>
-            <button type="submit" class="btn btn-primary">Search</button>
+        <form th:action="@{/books}" method="get" class="form-container" style="max-width: 100%; margin-bottom: 20px;">
+            <div style="display: flex; gap: 15px;">
+                <input type="text" name="title" placeholder="Search by Title..." th:value="${title}" style="flex-grow: 1;"/>
+                <input type="text" name="author" placeholder="Search by Author..." th:value="${author}" style="flex-grow: 1;"/>
+                <input type="text" name="isbn" placeholder="Search by ISBN..." th:value="${isbn}" style="flex-grow: 1;"/>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
         </form>
 
         <a th:href="@{/books/new}" class="btn btn-success">Add New Book</a>
 
         <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Author</th>
-                <th>ISBN</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="book : ${bookPage.content}">
-                <td th:text="${book.id}"></td>
-                <td th:text="${book.title}"></td>
-                <td th:text="${book.author}"></td>
-                <td th:text="${book.isbn}"></td>
-                <td>
-                    <a th:href="@{/books/edit/{id}(id=${book.id})}">Edit</a> |
-                    <form th:action="@{/books/delete/{id}(id=${book.id})}" method="post" style="display:inline;">
-                        <button type="submit" class="link-button">Delete</button>
-                    </form> |
-                    <a th:href="@{/books/details/{id}(id=${book.id})}">Manage Copies</a>
-                </td>
-            </tr>
-            </tbody>
         </table>
 
-        <div th:if="${bookPage.totalPages > 0}" class="pagination" style="margin-top: 20px;">
-            <span th:text="|Page ${bookPage.number + 1} of ${bookPage.totalPages}|"></span>
+        <div th:if="${bookPage.totalPages > 1}" class="pagination" style="margin-top: 20px;">
             <a th:if="${bookPage.hasPrevious()}"
-               th:href="@{/books(size=${bookPage.size}, page=${bookPage.number - 1}, query=${query})}">
+               th:href="@{/books(size=${bookPage.size}, page=${bookPage.number - 1}, title=${title}, author=${author}, isbn=${isbn})}">
                 Previous
             </a>
+            <span th:text="|Page ${bookPage.number + 1} of ${bookPage.totalPages}|"></span>
             <a th:if="${bookPage.hasNext()}"
-               th:href="@{/books(size=${bookPage.size}, page=${bookPage.number + 1}, query=${query})}">
+               th:href="@{/books(size=${bookPage.size}, page=${bookPage.number + 1}, title=${title}, author=${author}, isbn=${isbn})}">
                 Next
             </a>
         </div>

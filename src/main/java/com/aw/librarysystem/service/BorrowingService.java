@@ -9,6 +9,8 @@ import com.aw.librarysystem.entity.enums.MemberStatus;
 import com.aw.librarysystem.repository.BookCopyRepository;
 import com.aw.librarysystem.repository.BorrowingRecordRepository;
 import com.aw.librarysystem.repository.MemberRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -138,5 +140,9 @@ public class BorrowingService {
                 borrowingRecordRepository.save(record);
             }
         }
+    }
+
+    public Page<BorrowingRecord> findAllRecords(Pageable pageable) {
+        return borrowingRecordRepository.findAll(pageable);
     }
 }

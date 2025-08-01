@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{/fragments/header :: header(pageTitle='Borrowing History')}"></head>
+<body>
+<div class="page-container">
+    <div th:replace="~{/fragments/admin-sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <h1>All Borrowing Records</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>Record ID</th>
+                <th>Book Title</th>
+                <th>Member Name</th>
+                <th>Borrow Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="record : ${recordPage.content}">
+                <td th:text="${record.id}"></td>
+                <td th:text="${record.bookCopy.book.title}"></td>
+                <td th:text="${record.member.name}"></td>
+                <td th:text="${record.borrowDate}"></td>
+                <td th:text="${record.dueDate}"></td>
+                <td th:text="${record.status}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

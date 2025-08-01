@@ -9,6 +9,12 @@
 
     <div class="main-content">
         <h1>Book Catalog</h1>
+
+        <form th:action="@{/catalog}" method="get" style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <input type="text" name="query" placeholder="Search by Title or ISBN..." th:value="${query}" style="flex-grow: 1; padding: 10px;"/>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
         <table>
             <thead>
             <tr>
@@ -36,14 +42,14 @@
             </tbody>
         </table>
 
-        <div th:if="${bookPage.totalPages > 0}" class="pagination" style="margin-top: 20px;">
-            <span th:text="|Page ${bookPage.number + 1} of ${bookPage.totalPages}|"></span>
+        <div th:if="${bookPage.totalPages > 1}" class="pagination" style="margin-top: 20px;">
             <a th:if="${bookPage.hasPrevious()}"
-               th:href="@{/catalog(size=${bookPage.size}, page=${bookPage.number - 1})}">
+               th:href="@{/catalog(size=${bookPage.size}, page=${bookPage.number - 1}, query=${query})}">
                 Previous
             </a>
+            <span th:text="|Page ${bookPage.number + 1} of ${bookPage.totalPages}|" style="margin: 0 10px;"></span>
             <a th:if="${bookPage.hasNext()}"
-               th:href="@{/catalog(size=${bookPage.size}, page=${bookPage.number + 1})}">
+               th:href="@{/catalog(size=${bookPage.size}, page=${bookPage.number + 1}, query=${query})}">
                 Next
             </a>
         </div>
